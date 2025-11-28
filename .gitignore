@@ -35,15 +35,15 @@ env/
 *.swo
 *~
 
-# 输入输出文件
-input/*.mp4
-input/*.avi
-input/*.mov
-input/*.mkv
-output/*.mp4
-output/*.avi
-output/*.mov
-output/*.mkv
+# 保留示例mp4文件用于查看效果
+# input/*.mp4
+# input/*.avi
+# input/*.mov
+# input/*.mkv
+# output/*.mp4
+# output/*.avi
+# output/*.mov
+# output/*.mkv
 
 # 但保留说明文件
 !input/.gitkeep

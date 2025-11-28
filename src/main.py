@@ -1,7 +1,3 @@
-"""
-主程序入口：人体动作姿态估计与可视化系统
-"""
-
 import os
 import sys
 import argparse
@@ -45,21 +41,11 @@ def parse_arguments():
 
 
 def ensure_directories():
-    """确保必要的目录存在"""
     os.makedirs(INPUT_DIR, exist_ok=True)
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
 def get_video_files(directory: str) -> list:
-    """
-    获取目录下所有视频文件
-    
-    Args:
-        directory: 目录路径
-        
-    Returns:
-        视频文件路径列表
-    """
     video_extensions = ['.mp4', '.avi', '.mov', '.mkv', '.flv', '.wmv']
     video_files = []
     
@@ -72,28 +58,17 @@ def get_video_files(directory: str) -> list:
 
 def process_single_video(input_path: str, output_path: str, 
                         complexity: int = 2, confidence: float = 0.5):
-    """
-    处理单个视频文件
-    
-    Args:
-        input_path: 输入视频路径
-        output_path: 输出视频路径
-        complexity: 模型复杂度
-        confidence: 检测置信度
-    """
     print("="*60)
-    print("人体动作姿态估计与可视化系统")
+    print("Pose Estimation and Visualization System")
     print("="*60)
-    print(f"\n输入文件: {input_path}")
-    print(f"输出文件: {output_path}")
-    print(f"模型复杂度: {complexity}")
-    print(f"检测置信度: {confidence}")
+    print(f"\nInput file: {input_path}")
+    print(f"Output file: {output_path}")
+    print(f"Model complexity: {complexity}")
+    print(f"Detection confidence: {confidence}")
     
-    # 初始化组件
-    print("\n初始化系统...")
+    print("\nInitializing system")
     from config import MEDIAPIPE_CONFIG
     
-    # 更新配置
     config = MEDIAPIPE_CONFIG.copy()
     config['model_complexity'] = complexity
     config['min_detection_confidence'] = confidence
@@ -103,106 +78,88 @@ def process_single_video(input_path: str, output_path: str,
     visualizer = PoseVisualizer(estimator)
     processor = VideoProcessor(estimator, visualizer)
     
-    # 处理视频
-    print("开始处理视频...")
+    print("Processing video")
     success = processor.process_video(input_path, output_path)
     
     if success:
-        print("✓ 处理成功！")
+        print("Processing completed successfully")
         print("="*60)
         return True
     else:
-        print("✗ 处理失败！")
+        print("Processing failed")
         print("="*60)
         return False
 
 
 def batch_process(complexity: int = 2, confidence: float = 0.5):
-    """
-    批量处理视频文件
-    
-    Args:
-        complexity: 模型复杂度
-        confidence: 检测置信度
-    """
     print("="*60)
-    print("批量处理模式")
+    print("Batch Processing Mode")
     print("="*60)
     
-    # 获取输入文件夹中的所有视频
     video_files = get_video_files(INPUT_DIR)
     
     if not video_files:
-        print(f"\n错误：在 '{INPUT_DIR}' 文件夹中未找到视频文件")
-        print("请将视频文件放入该文件夹后重试")
+        print(f"\nError: No video files found in '{INPUT_DIR}'")
+        print("Please add video files to the folder and retry")
         return
     
-    print(f"\n找到 {len(video_files)} 个视频文件:")
+    print(f"\nFound {len(video_files)} video files:")
     for i, video in enumerate(video_files, 1):
         print(f"  {i}. {os.path.basename(video)}")
     
-    print("\n开始批量处理...\n")
+    print("\nStarting batch processing\n")
     
     success_count = 0
     fail_count = 0
     
     for i, input_path in enumerate(video_files, 1):
-        print(f"\n处理视频 {i}/{len(video_files)}: {os.path.basename(input_path)}")
+        print(f"\nProcessing video {i}/{len(video_files)}: {os.path.basename(input_path)}")
         print("-"*60)
         
-        # 生成输出文件名
         filename = os.path.basename(input_path)
         name, ext = os.path.splitext(filename)
         output_path = os.path.join(OUTPUT_DIR, f"{name}_pose{ext}")
         
-        # 处理视频
         if process_single_video(input_path, output_path, complexity, confidence):
             success_count += 1
         else:
             fail_count += 1
     
-    # 输出统计
     print("\n" + "="*60)
-    print("批量处理完成!")
-    print(f"  成功: {success_count} 个视频")
+    print("Batch processing completed")
+    print(f"  Success: {success_count} videos")
     if fail_count > 0:
-        print(f"  失败: {fail_count} 个视频")
+        print(f"  Failed: {fail_count} videos")
     print("="*60)
 
 
 def main():
-    """主函数"""
     args = parse_arguments()
     
-    # 确保目录存在
     ensure_directories()
     
     try:
         if args.batch:
-            # 批量处理模式
             batch_process(args.complexity, args.confidence)
         elif args.input and args.output:
-            # 单文件处理模式
             process_single_video(args.input, args.output, 
                                args.complexity, args.confidence)
         else:
-            # 交互式模式
             print("="*60)
-            print("人体动作姿态估计与可视化系统")
+            print("Pose Estimation and Visualization System")
             print("="*60)
-            print("\n请选择运行模式:")
-            print("1. 处理单个视频文件")
-            print("2. 批量处理input文件夹下的所有视频")
-            print("3. 退出")
+            print("\nPlease select a mode:")
+            print("1. Process single video file")
+            print("2. Batch process all videos in input folder")
+            print("3. Exit")
             
-            choice = input("\n请输入选项 (1/2/3): ").strip()
+            choice = input("\nEnter option (1/2/3): ").strip()
             
             if choice == '1':
-                input_path = input("请输入视频文件路径: ").strip()
-                output_path = input("请输入输出文件路径: ").strip()
+                input_path = input("Enter video file path: ").strip()
+                output_path = input("Enter output file path: ").strip()
                 
                 if not output_path:
-                    # 自动生成输出路径
                     filename = os.path.basename(input_path)
                     name, ext = os.path.splitext(filename)
                     output_path = os.path.join(OUTPUT_DIR, f"{name}_pose{ext}")
@@ -214,18 +171,18 @@ def main():
                 batch_process(args.complexity, args.confidence)
             
             elif choice == '3':
-                print("退出程序")
+                print("Exiting program")
                 sys.exit(0)
             
             else:
-                print("无效的选项！")
+                print("Invalid option")
                 sys.exit(1)
     
     except KeyboardInterrupt:
-        print("\n\n程序被用户中断")
+        print("\n\nProgram interrupted by user")
         sys.exit(0)
     except Exception as e:
-        print(f"\n错误: {str(e)}")
+        print(f"\nError: {str(e)}")
         import traceback
         traceback.print_exc()
         sys.exit(1)
